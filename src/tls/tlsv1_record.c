@@ -16,7 +16,11 @@
 
 #include "common.h"
 #include "md5.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "tlsv1_common.h"
 #include "tlsv1_record.h"
 

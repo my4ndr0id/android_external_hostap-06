@@ -99,7 +99,11 @@ static const char *commands_help =
 static struct wpa_ctrl *ctrl_conn;
 static int hostapd_cli_quit = 0;
 static int hostapd_cli_attached = 0;
+#ifndef ANDROID
 static const char *ctrl_iface_dir = "/var/run/hostapd";
+#else
+static const char *ctrl_iface_dir = "/system/lib/modules/hostapd";
+#endif
 static char *ctrl_ifname = NULL;
 static int ping_interval = 5;
 

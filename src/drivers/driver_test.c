@@ -31,7 +31,11 @@
 #include "driver.h"
 #include "l2_packet/l2_packet.h"
 #include "eloop.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "ieee802_11_defs.h"
 
 

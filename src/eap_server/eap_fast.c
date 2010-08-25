@@ -16,7 +16,11 @@
 
 #include "common.h"
 #include "aes_wrap.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "eap_i.h"
 #include "eap_tls_common.h"
 #include "tls.h"

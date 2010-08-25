@@ -1948,6 +1948,12 @@ struct hostapd_config * hostapd_config_read(const char *fname)
 				conf->hw_mode = HOSTAPD_MODE_IEEE80211B;
 			else if (os_strcmp(pos, "g") == 0)
 				conf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+                        else if (os_strcmp(pos, "n") == 0)
+				conf->hw_mode = HOSTAPD_MODE_IEEE80211N;
+                        else if (os_strcmp(pos, "g_only") == 0)
+				conf->hw_mode = HOSTAPD_MODE_IEEE80211G_ONLY;
+                        else if (os_strcmp(pos, "n_only") == 0)
+				conf->hw_mode = HOSTAPD_MODE_IEEE80211N_ONLY;
 			else {
 				wpa_printf(MSG_ERROR, "Line %d: unknown "
 					   "hw_mode '%s'", line, pos);

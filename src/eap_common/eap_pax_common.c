@@ -15,7 +15,11 @@
 #include "includes.h"
 
 #include "common.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "eap_pax_common.h"
 
 

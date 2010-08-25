@@ -18,7 +18,11 @@
 #include "eap_server/eap_i.h"
 #include "eap_server/eap_tls_common.h"
 #include "ms_funcs.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "eap_common/chap.h"
 #include "tls.h"
 #include "eap_common/eap_ttls.h"

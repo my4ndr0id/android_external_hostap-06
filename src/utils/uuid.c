@@ -16,7 +16,11 @@
 
 #include "common.h"
 #include "crypto.h"
+#ifdef ANDROID
+#include "../crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "uuid.h"
 
 int uuid_str2bin(const char *str, u8 *bin)

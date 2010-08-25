@@ -15,6 +15,9 @@ CFLAGS += -I../src/crypto
 CFLAGS += -I../src/utils
 CFLAGS += -I../src/common
 
+CFLAGS += -I../../openssl/include
+CFLAGS += -I../../../../external/install_openssl/include
+
 # Uncomment following line and set the path to your kernel tree include
 # directory if your C library does not include all header files.
 # CFLAGS += -DUSE_KERNEL_HEADERS -I/usr/src/linux/include
@@ -143,6 +146,12 @@ OBJS += driver_bsd.o
 CONFIG_L2_PACKET=y
 CONFIG_DNET_PCAP=y
 CONFIG_L2_FREEBSD=y
+endif
+
+ifdef CONFIG_DRIVER_QCHOSTAPD
+CFLAGS += -DCONFIG_DRIVER_QCHOSTAPD
+OBJS += driver_qcsoftap.o
+CONFIG_L2_PACKET=y
 endif
 
 ifdef CONFIG_DRIVER_TEST

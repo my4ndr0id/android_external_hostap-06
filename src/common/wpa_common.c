@@ -16,7 +16,11 @@
 
 #include "common.h"
 #include "md5.h"
+#ifdef ANDROID
+#include "../src/crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "sha256.h"
 #include "aes_wrap.h"
 #include "crypto.h"

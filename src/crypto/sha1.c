@@ -15,7 +15,11 @@
 #include "includes.h"
 
 #include "common.h"
+#ifdef ANDROID
+#include "../src/crypto/sha1.h"
+#else
 #include "sha1.h"
+#endif
 #include "md5.h"
 #include "crypto.h"
 

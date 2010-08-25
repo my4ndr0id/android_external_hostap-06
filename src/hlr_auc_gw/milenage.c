@@ -344,7 +344,7 @@ static void milenage_opc(const u8 *op, const u8 *k, u8 *opc)
 {
 	int i;
 	/* OP_C = OP XOR E_K(OP) */
-	aes_128_encrypt_block(k, op, opc);
+	(void)aes_128_encrypt_block(k, op, opc);
 	for (i = 0; i < 16; i++)
 		opc[i] ^= op[i];
 }
@@ -1028,10 +1028,13 @@ int main(int argc, char *argv[])
 	const struct milenage_test_set *t;
 	size_t res_len;
 
+	argc = argc;
+	argv = argv;
+
 	wpa_debug_level = 0;
 
 	printf("Milenage test sets\n");
-	for (i = 0; i < NUM_TESTS; i++) {
+	for (i = 0; i < (int)NUM_TESTS; i++) {
 		t = &test_sets[i];
 		printf("Test Set %d\n", i + 1);
 
@@ -1109,7 +1112,7 @@ int main(int argc, char *argv[])
 	wpa_hexdump(MSG_DEBUG, "RES", buf4, res_len);
 
 	printf("GSM-Milenage test sets\n");
-	for (i = 0; i < NUM_GSM_TESTS; i++) {
+	for (i = 0; i < (int)NUM_GSM_TESTS; i++) {
 		const struct gsm_milenage_test_set *g;
 		u8 sres[4], kc[8];
 		g = &gsm_test_sets[i];
