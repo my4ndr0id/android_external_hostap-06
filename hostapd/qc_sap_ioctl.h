@@ -146,7 +146,7 @@ typedef struct s_CommitConfig {
 
     u_int8_t RSNWPAReqIE[QCSAP_MAX_OPT_IE];     //If not null, it has the IE byte stream for RSN/WPA
     u_int16_t RSNWPAReqIELength;  //The byte count in the pRSNReqIE/ WPAIE
-
+    u_int8_t wps_state; //wps_state - disbaled/not configured, configured
 } s_CommitConfig_t;
 
 

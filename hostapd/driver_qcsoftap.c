@@ -316,13 +316,21 @@ static int QcHostapd_set_key (const char *ifname, void *priv,
                    __func__, alg_str, ether_sprintf(addr), key_idx, (int)key_len, set_tx);
  
     if (strcmp(alg_str, "none") == 0)
-                alg = WPA_ALG_NONE;
-    else if (strcmp(alg_str, "WEP") == 0)
-                alg = WPA_ALG_WEP;
-    else if (strcmp(alg_str, "TKIP") == 0)
-                alg = WPA_ALG_TKIP;
+        alg = WPA_ALG_NONE;
+    else if (strcmp(alg_str, "WEP") == 0){
+        alg = WPA_ALG_WEP;
+        if((drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N ) ||
+           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY))
+            drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+    }
+    else if (strcmp(alg_str, "TKIP") == 0){
+        alg = WPA_ALG_TKIP;
+        if((drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N ) ||
+           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY))
+            drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+    }
     else if (strcmp(alg_str, "CCMP") == 0)
-                alg = WPA_ALG_CCMP;
+        alg = WPA_ALG_CCMP;
     else {
           printf("%s: unknown/unsupported algorithm %s\n",
                     __func__, alg_str);
@@ -583,22 +591,16 @@ static int QcHostapd_set_wps_ie(void *priv, const u8 *ie,
         struct iwreq iwr;
         int ret = 0;
 
-        if(eHapdState_configured == drv->hapdConnState)    
-        {
-            os_memset(&iwr, 0, sizeof(iwr));
-            os_strlcpy(iwr.ifr_name, drv->iface, IFNAMSIZ);
-            iwr.u.data.pointer = (caddr_t) ie;
-            iwr.u.data.length = ie_len;
+        os_memset(&iwr, 0, sizeof(iwr));
+        os_strlcpy(iwr.ifr_name, drv->iface, IFNAMSIZ);
+        iwr.u.data.pointer = (caddr_t) ie;
+        iwr.u.data.length = ie_len;
 
         if (ioctl(drv->ioctl_sock, QCSAP_IOCTL_SETWPAIE, &iwr) < 0) {
-                perror("ioctl[QCSAP_IOCTL_SETWPAIE]");
-                ret = -1;
-            }
-        }
-        else
-        {
+            perror("ioctl[QCSAP_IOCTL_SETWPAIE]");
             ret = -1;
         }
+
         return ret;
 }
 
@@ -743,7 +745,7 @@ QcHostapd_set_wps_beacon_ie(const char *ifname, void *priv, const u8 *ie,
 {
         u8 *wps_ie_buf;
         int ret;
- 
+
         wps_ie_buf = malloc( len + 1);
         wps_ie_buf[0] = eQC_WPS_BEACON_IE;  
      
@@ -771,7 +773,6 @@ QcHostapd_set_wps_probe_resp_ie(const char *ifname, void *priv, const u8 *ie,
         wps_ie_buf[0] = eQC_WPS_PROBE_RSP_IE;
 
         memcpy(&wps_ie_buf[1], ie, len);
- 
  
  // Walkaround WPS config methods is not assigned issue               
         wps_genie = &wps_ie_buf[1];
@@ -932,56 +933,57 @@ static void
 QcHostapd_wireless_event_wireless_custom(struct QcHostapd_driver_data *drv,
 				       char *custom)
 {
-	wpa_printf(MSG_DEBUG, "Custom wireless event: '%s'", custom);
+    wpa_printf(MSG_DEBUG, "Custom wireless event: '%s'", custom);
 
-	if (strncmp(custom, "MLME-MICHAELMICFAILURE.indication", 33) == 0) {
-		char *pos;
-		u8 addr[ETH_ALEN];
-		pos = strstr(custom, "addr=");
-		if (pos == NULL) {
-			wpa_printf(MSG_DEBUG,
-				   "MLME-MICHAELMICFAILURE.indication "
-				   "without sender address ignored");
-			return;
-		}
-		pos += 5;
-		if (hwaddr_aton(pos, addr) == 0) {
-			ieee80211_michael_mic_failure(drv->hapd, addr, 1);
-		} else {
-			wpa_printf(MSG_DEBUG,
-				   "MLME-MICHAELMICFAILURE.indication "
-				   "with invalid MAC address");
-		}
-	} else if (strncmp(custom, "STA-TRAFFIC-STAT", 16) == 0) {
-		char *key, *value;
-		u32 val;
-		key = custom;
-		while ((key = strchr(key, '\n')) != NULL) {
-			key++;
-			value = strchr(key, '=');
-			if (value == NULL)
-				continue;
-			*value++ = '\0';
-			val = strtoul(value, NULL, 10);
-			if (strcmp(key, "mac") == 0)
-				hwaddr_aton(value, drv->acct_mac);
-			else if (strcmp(key, "rx_packets") == 0)
-				drv->acct_data.rx_packets = val;
-			else if (strcmp(key, "tx_packets") == 0)
-				drv->acct_data.tx_packets = val;
-			else if (strcmp(key, "rx_bytes") == 0)
-				drv->acct_data.rx_bytes = val;
-			else if (strcmp(key, "tx_bytes") == 0)
-				drv->acct_data.tx_bytes = val;
-			key = value;
-		}
+    if (strncmp(custom, "MLME-MICHAELMICFAILURE.indication", 33) == 0) {
+        char *pos;
+        u8 addr[ETH_ALEN];
+        pos = strstr(custom, "addr=");
+        if (pos == NULL) {
+            wpa_printf(MSG_DEBUG,
+                       "MLME-MICHAELMICFAILURE.indication "
+                        "without sender address ignored");
+            return;
+        }
+        pos += 5;
+        if (hwaddr_aton(pos, addr) == 0) {
+            ieee80211_michael_mic_failure(drv->hapd, addr, 1);
+        } else {
+            wpa_printf(MSG_DEBUG,
+                      "MLME-MICHAELMICFAILURE.indication "
+                      "with invalid MAC address");
+        }
+    } else if (strncmp(custom, "STA-TRAFFIC-STAT", 16) == 0) {
+        char *key, *value;
+        u32 val;
+        key = custom;
+        while ((key = strchr(key, '\n')) != NULL) {
+            key++;
+            value = strchr(key, '=');
+            if (value == NULL)
+                continue;
+            *value++ = '\0';
+            val = strtoul(value, NULL, 10);
+            if (strcmp(key, "mac") == 0)
+                hwaddr_aton(value, drv->acct_mac);
+            else if (strcmp(key, "rx_packets") == 0)
+                drv->acct_data.rx_packets = val;
+            else if (strcmp(key, "tx_packets") == 0)
+                drv->acct_data.tx_packets = val;
+            else if (strcmp(key, "rx_bytes") == 0)
+                drv->acct_data.rx_bytes = val;
+            else if (strcmp(key, "tx_bytes") == 0)
+                drv->acct_data.tx_bytes = val;
+            key = value;
+        }
 	
-	}  
+    }
     else if (strncmp(custom, "STOP-BSS.response", 17) == 0) {
-		/* Event received to stop Soft AP bss */
-		wpa_printf(MSG_DEBUG, "Terminate hostapd\n");
-		eloop_terminate();
-	}
+        /* Event received to stop Soft AP bss */
+        wpa_printf(MSG_DEBUG, "Terminate hostapd\n");
+        drv->hapdConnState = eHapdState_Notconfigured;
+        eloop_terminate();
+    }
     else if (strncmp(custom, "MLMEWPSPBCPROBEREQ.indication", 29) == 0)
     {
         QcHostapd_wps_pbc_probe_req_ind(drv->hapd);
@@ -1552,6 +1554,7 @@ QcHostapd_commit(void *priv)
     pQcCommitConfig->deny_mac = (struct qc_mac_acl_entry *)drv->hapd->conf->deny_mac;
     pQcCommitConfig->num_deny_mac = drv->hapd->conf->num_deny_mac;
     pQcCommitConfig->dtim_period = drv->hapd->conf->dtim_period;
+    pQcCommitConfig->wps_state = drv->hapd->conf->wps_state;
 
     pQcCommitConfig->qcsap80211d = drv->hapd->iconf->ieee80211d;
 
@@ -1609,9 +1612,9 @@ QcHostapd_commit(void *priv)
     if (ioctl(drv->ioctl_sock, QCSAP_IOCTL_COMMIT, &iwr) < 0) {
         drv->hapdConnState = eHapdState_Notconfigured;
         perror("ioctl[SIOCGIWESSID]");
-		os_free(pQcCommitConfig);
+        os_free(pQcCommitConfig);
         drv->hapdConnState = eHapdState_Notconfigured;
-		return -1;
+        return -1;
     }
     
     os_free(pQcCommitConfig);

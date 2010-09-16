@@ -589,7 +589,7 @@ install: all
 	for i in $(ALL); do cp $$i /usr/local/bin/$$i; done
 
 hostapd: $(OBJS)
-	$(CC) -o hostapd $(OBJS) $(LIBS)
+	$(CC) -o hostapd $(OBJS) $(LIBS) -L../../../../external/install_openssl/lib/
 
 OBJS_c = hostapd_cli.o ../src/common/wpa_ctrl.o ../src/utils/os_$(CONFIG_OS).o
 hostapd_cli: $(OBJS_c)

@@ -565,9 +565,10 @@ LOCAL_SHARED_LIBRARIES := libc libcutils libssl libcrypto
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := $(HAPD_SRC)
 LOCAL_C_INCLUDES := $(INCLUDES)
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.conf:system/lib/modules/hostapd.conf
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.accept:system/lib/modules/hostapd.accept
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.deny:system/lib/modules/hostapd.deny
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.conf:persist/qcom/softap/hostapd_default.conf
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.conf:data/hostapd/hostapd.conf
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.accept:data/hostapd/hostapd.accept
+PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.deny:data/hostapd/hostapd.deny
 include $(BUILD_EXECUTABLE)
 
 ##################### BUILD CLI ############################
