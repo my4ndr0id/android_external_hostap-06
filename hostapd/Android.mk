@@ -561,7 +561,7 @@ endif
 #################### BUILD HOSTAPD #########################
 include $(CLEAR_VARS)
 LOCAL_MODULE := hostapd
-LOCAL_SHARED_LIBRARIES := libc libcutils libssl libcrypto
+LOCAL_SHARED_LIBRARIES := libc libcutils libssl libcrypto libsysutils
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := $(HAPD_SRC)
 LOCAL_C_INCLUDES := $(INCLUDES)

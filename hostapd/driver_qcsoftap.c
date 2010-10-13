@@ -76,8 +76,15 @@
 #endif /* IEEE80211_IOCTL_SETWMMPARAMS */
 
 #ifdef ANDROID
+#include <sys/ioctl.h>                                         
+#include <stdlib.h>                                            
+#include <fcntl.h>                                             
+#include <errno.h>                                             
+#include <string.h>                                            
+#include <stdio.h>
 /* Because this is defined in wireless_copy.h which has conflict with the android builtin wireless_copy.h */
 #define IW_ENCODE_ALG_PMK 4
+extern int delete_module(char * , int);
 #else
 #include "wireless_copy.h"
 #endif
@@ -987,6 +994,36 @@ QcHostapd_wireless_event_wireless_custom(struct QcHostapd_driver_data *drv,
     else if (strncmp(custom, "MLMEWPSPBCPROBEREQ.indication", 29) == 0)
     {
         QcHostapd_wps_pbc_probe_req_ind(drv->hapd);
+    }
+    else if (strncmp(custom, "AUTO-SHUT.indication ", strlen("AUTO-SHUT.indication ")) == 0)
+    {
+        int ret;
+        char str[64], *drv_name;
+        memset(&str, 0, sizeof(str));
+
+#ifndef ANDROID
+#define RMMOD_PATH "/sbin/rmmod "
+        //for linux PC
+        strncpy(str ,RMMOD_PATH, sizeof(str));
+        drv_name = custom + strlen("AUTO-SHUT.indication ");
+
+        strncat(str, drv_name, sizeof(str)-strlen(RMMOD_PATH));
+        str[sizeof(str)-1] = '\0';
+        ret = system(str);
+#else
+          drv_name = custom + strlen("AUTO-SHUT.indication ");
+
+          if (0 == (ret = delete_module(drv_name, (int)(O_NONBLOCK | O_EXCL))))
+              ret = delete_module("librasdioif", (int)O_NONBLOCK | O_EXCL);
+
+#endif
+        if (ret != 0)
+          wpa_printf(MSG_DEBUG, "Error in unloading %s\n", drv_name);
+        else
+          wpa_printf(MSG_DEBUG, "%s unloaded successfully\n", drv_name);
+
+        drv->hapdConnState = eHapdState_Notconfigured;
+        eloop_terminate();
     }
 }
 
