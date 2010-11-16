@@ -775,6 +775,7 @@ QcHostapd_set_wps_probe_resp_ie(const char *ifname, void *priv, const u8 *ie,
         u8 *pos;
         u16 wpsElemlen;
         int ret;
+        u16 config_methods = 0;
 
         wps_ie_buf = malloc( len + 1);
         wps_ie_buf[0] = eQC_WPS_PROBE_RSP_IE;
@@ -798,10 +799,22 @@ QcHostapd_set_wps_probe_resp_ie(const char *ifname, void *priv, const u8 *ie,
                     {
                         case ATTR_CONFIG_METHODS:
                             pos +=4;
-                            if(hapd->wps)
+                            if (hapd->conf->config_methods) {
+                                char *m = hapd->conf->config_methods;
+                                if (os_strstr(m, "label"))
+                                    config_methods |= WPS_CONFIG_LABEL;
+                                if (os_strstr(m, "display"))
+                                    config_methods |= WPS_CONFIG_DISPLAY;
+                                if (os_strstr(m, "push_button"))
+                                    config_methods |= WPS_CONFIG_PUSHBUTTON;
+                                if (os_strstr(m, "keypad"))
+                                    config_methods |= WPS_CONFIG_KEYPAD;
+                            }
+
+                            if(config_methods)
                             {
-                                *pos = (u8) (hapd->wps->config_methods >> 8); 
-                                *(pos+1) = (u8) (hapd->wps->config_methods & 0xff);
+                                *pos = (u8) (config_methods >> 8); 
+                                *(pos+1) = (u8) (config_methods & 0xff);
                             }
                             pos += 2; 
                         break;
