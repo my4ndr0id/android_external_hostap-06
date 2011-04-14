@@ -260,6 +260,30 @@ static int hostapd_cli_cmd_sa_query(struct wpa_ctrl *ctrl, int argc,
 
 
 #ifdef CONFIG_WPS
+/* Added to pass Wifi WPS test cases 
+ * The logic used is same as the one suggested in WSC spec v2.0 section 7.4.1
+ */
+static int hostapd_validate_checksum( char *pin )
+{
+	unsigned int PIN = 0, accum = 0 ;
+
+	if( (strlen(pin)) != 8 ) return 1; //no need to validate the PIN. section 7.4.1 WPS spec v2.0
+
+	sscanf( pin, "%d", &PIN);
+
+	accum += 3 * ((PIN / 10000000) % 10);
+	accum += 1 * ((PIN / 1000000) % 10);
+	accum += 3 * ((PIN / 100000) % 10);
+	accum += 1 * ((PIN / 10000) % 10);
+	accum += 3 * ((PIN / 1000) % 10);
+	accum += 1 * ((PIN / 100) % 10);
+	accum += 3 * ((PIN / 10) % 10);
+	accum += 1 * ((PIN / 1) % 10);
+
+	return (0 == (accum % 10));
+
+}
+
 static int hostapd_cli_cmd_wps_pin(struct wpa_ctrl *ctrl, int argc,
 				   char *argv[])
 {
@@ -274,6 +298,12 @@ static int hostapd_cli_cmd_wps_pin(struct wpa_ctrl *ctrl, int argc,
 			 argv[0], argv[1], argv[2]);
 	else
 		snprintf(buf, sizeof(buf), "WPS_PIN %s %s", argv[0], argv[1]);
+
+	if(!hostapd_validate_checksum(argv[1])) {
+		printf("PIN Checksum failed. Please enter a valid PIN.\n");
+		return -1;
+	}
+
 	return wpa_ctrl_command(ctrl, buf);
 }
 
