@@ -53,7 +53,7 @@ typedef struct sSSID
 
 typedef struct sSSIDInfo
 {
-   tSSID     ssid;   
+   tSSID     ssid;
    u_int8_t  ssidHidden;
 }tSSIDInfo;
 
@@ -87,7 +87,7 @@ typedef enum {
     eQC_AUTH_TYPE_OPEN_SYSTEM,
     eQC_AUTH_TYPE_SHARED_KEY,
     eQC_AUTH_TYPE_AUTO_SWITCH
-} eQcAuthType; 
+} eQcAuthType;
 
 typedef enum {
     eQC_WPS_BEACON_IE,
@@ -114,7 +114,7 @@ typedef struct s_CommitConfig {
 		QC_ACCEPT_UNLESS_DENIED = 0,
 		QC_DENY_UNLESS_ACCEPTED = 1,
 	} qc_macaddr_acl;
-    
+
     struct qc_mac_acl_entry *accept_mac; /* MAC filtering */
     u_int32_t num_accept_mac;
     struct qc_mac_acl_entry *deny_mac;   /* MAC filtering */
@@ -128,10 +128,10 @@ typedef struct s_CommitConfig {
     u_int32_t countryCode[3];  //it ignored if [0] is 0.
 
     u_int32_t ht_op_mode_fixed;
-    
+
     /*HT capability information to enable/diabale protection
      *           bit15   bit14   bit13   bit12 bit11 bit10    bit9 bit8
-     * (overlap) from11a from11b from11g Ht20  NonGf LsigTxop Rifs OBSS   
+     * (overlap) from11a from11b from11g Ht20  NonGf LsigTxop Rifs OBSS
      * bit7    bit6    bit5    bit4 bit3  bit2     bit1 bit0
      * from11a from11b from11g ht20 nonGf lsigTxop rifs obss*/
     u_int16_t ht_capab;
@@ -141,7 +141,7 @@ typedef struct s_CommitConfig {
     eQcAuthType authType;
 
     u_int8_t privacy;
-	
+
     u_int8_t set_ieee8021x;
 
     u_int8_t RSNWPAReqIE[QCSAP_MAX_OPT_IE];     //If not null, it has the IE byte stream for RSN/WPA
@@ -190,7 +190,7 @@ struct sQcSapreq_wscie {
 typedef struct sQcSapreq_WPSPBCProbeReqIES {
 	u_int8_t	macaddr[QCSAP_ADDR_LEN];
     u_int16_t   probeReqIELen;
-    u_int8_t    probeReqIE[512]; 
+    u_int8_t    probeReqIE[512];
 } sQcSapreq_WPSPBCProbeReqIES_t ;
 
 
@@ -219,10 +219,20 @@ typedef struct sQcSapreq_WPSPBCProbeReqIES {
 #define QCSAP_IOCTL_AP_STATS          (SIOCIWFIRSTPRIV+12)
 #define QCSAP_IOCTL_GET_STATS         (SIOCIWFIRSTPRIV+13)
 #define QCSAP_IOCTL_CLR_STATS         (SIOCIWFIRSTPRIV+14)
+#define QCSAP_IOCTL_PRIV_SET_THREE_INT_GET_NONE (SIOCIWFIRSTPRIV+15)
+#define WE_SET_WLAN_DBG 1
+#define QCSAP_IOCTL_PRIV_SET_VAR_INT_GET_NONE (SIOCIWFIRSTPRIV+16)
+#define WE_LOG_DUMP_CMD 1
 
-enum { 
-    QCSAP_PARAM_1 = 1,
-    QCSAP_PARAM_2 = 2,
+#ifdef WLAN_FEATURE_P2P
+#define WE_P2P_NOA_CMD  2
+#endif
+
+#define MAX_VAR_ARGS         7
+
+enum {
+    QCSAP_PARAM_MAX_ASSOC = 1,
+    QCSAP_PARAM_MODULE_DOWN_IND = 5,
 };
 
 
