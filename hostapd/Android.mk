@@ -561,6 +561,7 @@ endif
 #################### BUILD HOSTAPD #########################
 include $(CLEAR_VARS)
 LOCAL_MODULE := hostapd
+LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libc libcutils libssl libcrypto libsysutils
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := $(HAPD_SRC)
@@ -574,6 +575,7 @@ include $(BUILD_EXECUTABLE)
 ##################### BUILD CLI ############################
 include $(CLEAR_VARS)
 LOCAL_MODULE := hostapd_cli
+LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libc libcutils libcrypto libssl
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := hostapd_cli.c ../src/common/wpa_ctrl.c ../src/utils/os_$(CONFIG_OS).c
@@ -583,6 +585,7 @@ include $(BUILD_EXECUTABLE)
 #################### NT PASSWORD HASH #######################
 include $(CLEAR_VARS)
 LOCAL_MODULE := nt_password_hash
+LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libc libcutils libcrypto libssl
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := nt_password_hash.c ../src/crypto/ms_funcs.c ../src/crypto/sha1.c ../src/crypto/rc4.c ../src/crypto/md5.c ../src/crypto/crypto_openssl.c ../src/utils/os_$(CONFIG_OS).c
@@ -592,6 +595,7 @@ include $(BUILD_EXECUTABLE)
 #################### NT PASSWORD HASH #######################
 include $(CLEAR_VARS)
 LOCAL_MODULE := hlr_auc_gw
+LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libc libcutils libcrypto libssl
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := $(HLOCAL_SRC_FILES)
@@ -603,6 +607,7 @@ ifdef CONFIG_TEST_MILINAGE
 TEST_SRC_MILENAGE = ../src/hlr_auc_gw/milenage.c ../src/crypto/aes_wrap.c ../src/crypto/aes.c ../src/utils/common.c ../src/utils/wpa_debug.c ../src/utils/os_$(CONFIG_OS).c
 include $(CLEAR_VARS)
 LOCAL_MODULE := test-milenage
+LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libc libcutils libcrypto libssl
 LOCAL_CFLAGS := -DTEST_MAIN_MILENAGE -I. -DINTERNAL_AES -I../src/crypto -I../src/utils  -Wall -Werror
 LOCAL_SRC_FILES := $(TEST_SRC_MILENAGE)
