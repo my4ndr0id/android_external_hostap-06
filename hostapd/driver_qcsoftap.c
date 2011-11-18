@@ -327,14 +327,26 @@ static int QcHostapd_set_key (const char *ifname, void *priv,
     else if (strcmp(alg_str, "WEP") == 0){
         alg = WPA_ALG_WEP;
         if((drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N ) ||
-           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY))
-            drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY)){
+               if(drv->hapd->iconf->channel > 14){
+                  drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211A;
+               }
+               else{
+                  drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+               }
+        }
     }
     else if (strcmp(alg_str, "TKIP") == 0){
         alg = WPA_ALG_TKIP;
         if((drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N ) ||
-           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY))
-            drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+           (drv->hapd->iconf->hw_mode == HOSTAPD_MODE_IEEE80211N_ONLY)){
+               if(drv->hapd->iconf->channel > 14){
+                  drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211A;
+               }
+               else{
+                  drv->hapd->iconf->hw_mode = HOSTAPD_MODE_IEEE80211G;
+               }
+        }
     }
     else if (strcmp(alg_str, "CCMP") == 0)
         alg = WPA_ALG_CCMP;
