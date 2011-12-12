@@ -566,12 +566,39 @@ LOCAL_SHARED_LIBRARIES := libc libcutils libssl libcrypto libsysutils
 LOCAL_CFLAGS := $(HAPD_CFLAGS)
 LOCAL_SRC_FILES := $(HAPD_SRC)
 LOCAL_C_INCLUDES := $(INCLUDES)
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.conf:persist/qcom/softap/hostapd_default.conf
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.conf:data/hostapd/hostapd.conf
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.accept:data/hostapd/hostapd.accept
-PRODUCT_COPY_FILES += $(LOCAL_PATH)/hostapd.deny:data/hostapd/hostapd.deny
 include $(BUILD_EXECUTABLE)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := hostapd_default.conf
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES := hostapd.conf
+LOCAL_MODULE_PATH  := $(TARGET_OUT_PERSIST)/qcom/softap
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := hostapd.conf
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_PATH  := $(TARGET_OUT_DATA)/hostapd
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := hostapd.accept
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_PATH  := $(TARGET_OUT_DATA)/hostapd
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := hostapd.deny
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_MODULE_PATH  := $(TARGET_OUT_DATA)/hostapd
+include $(BUILD_PREBUILT)
 ##################### BUILD CLI ############################
 include $(CLEAR_VARS)
 LOCAL_MODULE := hostapd_cli
